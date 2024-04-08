@@ -1,0 +1,11 @@
+{
+  "expo": {
+    "name": "meal-planer",
+    "slug": "meal-planer",
+    "version": "1.0.0",
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  },
+  "name": "meal-planer"
+}
