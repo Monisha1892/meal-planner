@@ -38,6 +38,12 @@ Yarn is one of the main JavaScript package managers for the Node.js JavaScript r
 
 [Core Components and Native Components](https://reactnative.dev/docs/intro-react-native-components)
 
+#### Tailwind (Nativewind)
+[Nativewind overview](https://www.nativewind.dev/overview/)
+
+[React Native with Tailwind CSS in 2023 (video tutorial)](https://www.youtube.com/watch?v=UHMyREDtp8s)
+
+
 ## Getting started
 
 ```
