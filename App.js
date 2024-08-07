@@ -1,9 +1,13 @@
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { Button, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Image } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import SearchBar from './components/SearchBar';
+import UserAccount from './components/UserAccount';
+import Recipes from './components/Recipes';
+
+const Stack = createNativeStackNavigator();
 
 function HomeScreen({ navigation }) {
   return (
@@ -12,10 +16,10 @@ function HomeScreen({ navigation }) {
       <SearchBar />
       <View style={styles.imageContainer}>
         <TouchableOpacity onPress={() => navigation.navigate('UserAccount')}>
-          <Image source={require('./assets/user-account.jpg')} style={styles.image} />
+          <Image source={require('./assets/user-account.jpeg')} style={styles.image} />
         </TouchableOpacity>
         <TouchableOpacity onPress={() => navigation.navigate('Recipes')}>
-          <Image source={require('./assets/recipes.jpg')} style={styles.image} />
+          <Image source={require('./assets/recipes.jpeg')} style={styles.image} />
         </TouchableOpacity>
       </View>
       <StatusBar style="auto" />
