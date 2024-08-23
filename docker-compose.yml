@@ -1,0 +1,20 @@
+version: '3'
+
+services:
+  mysql:
+    image: mysql/mysql-server:8.0
+    container_name: mysql-container
+    command:
+      [
+        "mysqld",
+        "--default-authentication-plugin=mysql_native_password"
+      ]
+    environment:
+      MYSQL_ROOT_PASSWORD: my-secret-pw # Choose a secure password
+      MYSQL_DATABASE: meal_planner # Name of your database
+      # You can also specify MYSQL_USER and MYSQL_PASSWORD if needed
+    ports:
+      - "3307:3306"
+    volumes:
+      - ./db-init:/docker-entrypoint-initdb.d/ # For DB initialization
+    restart: always

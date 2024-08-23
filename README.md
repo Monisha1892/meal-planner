@@ -43,11 +43,45 @@ Yarn is one of the main JavaScript package managers for the Node.js JavaScript r
 
 [React Native with Tailwind CSS in 2023 (video tutorial)](https://www.youtube.com/watch?v=UHMyREDtp8s)
 
+#### Express
+[Express documentation](https://expressjs.com/en/starter/hello-world.html)
+
+[Database integration](https://expressjs.com/en/guide/database-integration.html#mysql)
+
+#### Docker
+[Docker downloads](https://docker.com/)
+
+[Docker documentation](https://docs.docker.com/)
+
+#### MySQL
+[Install MySQL Server on Mac](https://dev.mysql.com/doc/refman/8.0/en/macos-installation-pkg.html)
+
+[Install MySQL Server on Windows](https://dev.mysql.com/doc/refman/8.0/en/windows-installation.html)
+
+[Download MySQL Workbench](https://dev.mysql.com/downloads/workbench/)
+
+[Data types](https://dev.mysql.com/doc/refman/8.4/en/data-types.html)
+
+#### AWS S3
+[What is S3?](https://cloudian.com/blog/s3-storage-behind-the-scenes/)
+
+[AWS S3 documentation](https://docs.aws.amazon.com/AmazonS3/latest/userguide/Welcome.html)
 
 ## Getting started
 
+#### Mobile Frontend
 ```
-cd meal-planner
+cd mobile-app
 yarn run install
 yarn run start
 ```
+
+#### API
+```
+cd api
+node app.js
+```
+
+#### Database
+1. Start MySQL server and open Workbench.
+2. Copy and execute the `meal_planner_database.sql` and `populate_database.sql`  files
