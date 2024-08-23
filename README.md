@@ -54,6 +54,10 @@ Yarn is one of the main JavaScript package managers for the Node.js JavaScript r
 [Docker documentation](https://docs.docker.com/)
 
 #### MySQL
+[Install MySQL Server on Mac](https://dev.mysql.com/doc/refman/8.0/en/macos-installation-pkg.html)
+
+[Install MySQL Server on Windows](https://dev.mysql.com/doc/refman/8.0/en/windows-installation.html)
+
 [Download MySQL Workbench](https://dev.mysql.com/downloads/workbench/)
 
 [Data types](https://dev.mysql.com/doc/refman/8.4/en/data-types.html)
@@ -79,6 +83,5 @@ node app.js
 ```
 
 #### Database
-
-```
-```
+1. Start MySQL server and open Workbench.
+2. Copy and execute the `meal_planner_database.sql` and `populate_database.sql`  files
