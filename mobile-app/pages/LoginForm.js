@@ -11,13 +11,14 @@ import {
   TextInput,
   View,
 } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 
 const api = axios.create({
   baseURL: "http://localhost:3011",
 });
 
-export default function LoginForm() {
+export default function LoginForm({ route, navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [submitEmail, setSubmitEmail] = useState(null);
@@ -31,7 +32,6 @@ export default function LoginForm() {
   useEffect(() => {
     if (submitEmail && submitPassword) {
       const login = async () => {
-        console.log("start login");
         const response = await api.post("/login", {
           args: { email: submitEmail, password: submitPassword },
         });
@@ -39,7 +39,15 @@ export default function LoginForm() {
         const data = response.data;
 
         if (data.response === "Success") {
-          Alert.alert(`Welcome ${data.firstName} ${data.lastName}`);
+          try {
+            await AsyncStorage.setItem("UserJWT", data.token);
+            const { setIsSignedIn } = route.params;
+            setIsSignedIn(true);
+
+            navigation.navigate("Home");
+          } catch (e) {
+            console.log(e);
+          }
         } else if (data.response === "Incorrect email or password") {
           Alert.alert(data.response);
         }
