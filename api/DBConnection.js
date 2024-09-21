@@ -1,6 +1,4 @@
 const express = require("express");
-const app = express();
-const port = 3011;
 
 const mysql = require("mysql2");
 const dbConnect = {
@@ -10,7 +8,6 @@ const dbConnect = {
   password: "root-password",
   database: "meal_planner",
 };
-const loginTableName = "sos.users";
 
 class DBConnector {
   connectToDB() {
@@ -43,7 +40,7 @@ class DBConnector {
   }
 
   submitBasicQuery(sql, onDone) {
-    this.connection.query(sql, [true], (error, results, fields) => {
+    this.connection.query(sql, [true], (error, results) => {
       //testing stuff
       console.log(error);
       console.log("results below");
