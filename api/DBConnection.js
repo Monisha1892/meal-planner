@@ -5,7 +5,7 @@ const dbConnect = {
   host: "localhost",
   port: "3306",
   user: "root",
-  password: "root-password",
+  password: "Moni_1892",
   database: "meal_planner",
 };
 
@@ -21,7 +21,7 @@ class DBConnector {
           }
           console.log("Connected to the MySQL server.");
         }),
-      15000
+
     );
     console.log(this.connection.state);
   }

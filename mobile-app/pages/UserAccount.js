@@ -2,11 +2,13 @@
 
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import NavigationBar from "./NavigationBar";
 
 export default function UserAccount() {
   return (
     <View style={styles.container}>
-      <Text>User Account Page</Text>
+       {/* Navigation Bar */}
+       <NavigationBar navigation={navigation} />
     </View>
   );
 }

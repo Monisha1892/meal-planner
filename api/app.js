@@ -1,11 +1,14 @@
 const express = require("express");
 const app = express();
+const cors = require("cors");
 const port = 3011;
 
 const bodyParser = require("body-parser");
 
 const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
+
+app.use(cors()); // To allow cross-origin requests
 
 // TLS connections
 // HTTPS
@@ -35,6 +38,7 @@ function generateAccessToken(username, id) {
 function getAllRecipes(res) {
   const query = "SELECT * FROM recipes";
   DB.submitBasicQuery(query, (results) => {
+  console.log({results});
     if (results.length > 0) {
       res.send(results);
     } else {
@@ -65,7 +69,9 @@ function login(email, password, res) {
 }
 
 app.get("/recipes", (_req, res) => {
+  console.log(1);
   getAllRecipes(res);
+
 });
 
 app.use("/login", (req, res) => {
