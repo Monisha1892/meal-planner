@@ -17,6 +17,7 @@ import UserAccount from "./pages/UserAccount";
 import Recipes from "./pages/Recipes";
 import NavigationBar from "./pages/NavigationBar";
 import RecipeDetails from "./pages/RecipeDetails";
+import RecipeCreateOrEdit from "./pages/RecipeSaveOrEdit";
 
 const Stack = createNativeStackNavigator();
 
@@ -165,8 +166,14 @@ export default function App() {
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="UserAccount" component={UserAccountScreen} />
         <Stack.Screen name="Recipes" component={Recipes} />
-        <Stack.Screen name="RecipeDetails" component={RecipeDetails} options={{ title: 'Recipe Details'}} />
-        <Stack.Screen name="LoginForm" component={LoginForm} options={{ title: 'Login form'}} />
+        <Stack.Screen name="RecipeDetails" component={RecipeDetails} />
+        <Stack.Screen name="RecipeCreateOrEdit" component={RecipeCreateOrEdit} />
+        {/* <Stack.Screen name="Settings" component={SettingsScreen} /> */}
+        {/* <Stack.Screen name="Search" component={SearchScreen} /> */}
+        {/* <Stack.Screen name="SearchByQuery" component={SearchByQueryScreen} /> */}
+        {/* <Stack.Screen name="SearchByIngredient" component={SearchByIngredientScreen} /> */}
+        {/* <Stack.Screen name="SearchByImage" component={SearchByImageScreen} /> */}
+        <Stack.Screen name="LoginForm" component={LoginForm} />
       </Stack.Navigator>
     </NavigationContainer>
   );

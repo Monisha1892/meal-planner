@@ -97,7 +97,7 @@ function login(email, password, res) {
   const query = `SELECT * FROM users WHERE email='${email}'`;
   DB.submitBasicQuery(query, (results) => {
     if (results.length === 1 && results[0].password === password) {
-      const token = generateAccessToken(email, results[0].id);
+      const token = generateAccessToken({ email, id: results[0].id });
       res.send({
         response: "Success",
         email: results[0].email,
@@ -115,6 +115,50 @@ function login(email, password, res) {
 }
 
 // Existing endpoint to get all recipes
+
+function createUser(email, firstName, lastName, password, res) {
+  const checkExistingUserQuery = `SELECT * FROM users WHERE email='${email}'`;
+  DB.submitBasicQuery(checkExistingUserQuery, (results) => {
+    if (results.length > 0) {
+      res.send({ response: "Could not create user." });
+      return;
+    }
+    const insertQuery = `
+      INSERT INTO users (email, first_name, last_name, password) 
+      VALUES (${email}, ${firstName}, ${lastName}, ${password})
+    `;
+
+    DB.submitBasicQuery(insertQuery, (results) => {
+      if (results) {
+        const token = generateAccessToken(email, results.id);
+        res.send({
+          response: "Success",
+          email: results.email,
+          id: results.id,
+          firstName: results.first_name,
+          lastName: results.last_name,
+          token,
+        });
+        return;
+      }
+    });
+  });
+}
+
+function createRecipe(data, res) {
+  const insertIntoRecipe = `
+    INSERT INTO recipes (owner_user, title, method, notes, time_prep, time_cook, time_wait, image, category_diet, category_style)
+    VALUES (${data.ownerId}, ${data.title}, ${data.method}, ${data.notes}, ${data.timePrep}, ${data.timeWait}, ${data.image}, ${data.categoryDiet}, ${data.categoryStyle})
+  `;
+  DB.submitBasicQuery(insertIntoRecipe, (results) => {
+    if (results) {
+      res.send({ response: "Success" });
+      return;
+    }
+    res.send({response: "Could not create recipe."})
+  });
+}
+
 app.get("/recipes", (_req, res) => {
   console.log(1);
   getAllRecipes(res);
@@ -134,6 +178,21 @@ app.use("/login", (req, res) => {
   login(email, password, res);
 });
 
+
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
+});
+
+app.post("/signup", (req, res) => {
+  const email = req.body.args.email;
+  const firstName = req.body.args.firstName;
+  const lastName = req.body.args.lastName;
+  const password = req.body.args.password;
+
+  createUser(email, firstName, lastName, password, res);
+});
+
+app.post("/create-recipe", (req, res) => {
+  const data = req.body.args;
+  createRecipe(data, res)
 });

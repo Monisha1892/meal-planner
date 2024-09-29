@@ -1,5 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, ScrollView, Image } from "react-native";
+import {
+  Button,
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  Image,
+} from "react-native";
 import { Card, Button } from "react-native-elements";
 import axios from "axios";
 import NavigationBar from "./NavigationBar";
@@ -32,20 +39,25 @@ export default function Recipes({ navigation }) {
   const handleCardPress = (recipe) => {
     console.log("Recipe clicked: ", recipe.title);
     // Example: Navigate to Recipe Details screen with the selected recipe
-    navigation.navigate('RecipeDetails', { recipeId: recipe.id });
+    navigation.navigate("RecipeDetails", { recipeId: recipe.id });
   };
 
   //handle image loading error and set fallback image
   const handleImageError = (index) => {
-   setImageError((prevErrors) => ({
-    ...prevErrors,
-    [index]: true, // mark that the image at this index failed to load
-   }));
+    setImageError((prevErrors) => ({
+      ...prevErrors,
+      [index]: true, // mark that the image at this index failed to load
+    }));
   };
 
   return (
     <View style={styles.container}>
-
+      <Button
+        title="Create Recipe"
+        onPress={() =>
+          navigation.navigate("RecipeCreateOrEdit", { mode: "create" })
+        }
+      />
       {/* Displaying all the recipes */}
       <ScrollView>
         {recipes.length > 0 ? (
@@ -55,10 +67,10 @@ export default function Recipes({ navigation }) {
               {recipe.image && (
                 <Image
                   source={{
-                   uri: imageError[index]
-                    ? "https://via.placeholder.com/200" // NEW: Fallback image URL"
-                    :recipe.image,
-                    }}
+                    uri: imageError[index]
+                      ? "https://via.placeholder.com/200" // NEW: Fallback image URL"
+                      : recipe.image,
+                  }}
                   style={styles.image}
                   resizeMode="cover" // Ensures image covers the container uniformly
                   onError={() => handleImageError(index)}
