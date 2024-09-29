@@ -14,8 +14,13 @@ import {
 import { decode } from "base-64";
 import { jwtDecode } from "jwt-decode";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
 
 global.atob = decode;
+
+const api = axios.create({
+  baseURL: "http://localhost:3011",
+});
 
 const dietCategory = [
   { key: "VEGETARIAN", value: "Vegetarian" },
@@ -144,6 +149,14 @@ const RecipeForm = ({ mode, recipeId, navigation }) => {
         categoryDiet: selectedDietCategory,
         categoryStyle: selectedCookingStyleCategory,
       };
+
+      const response = await api.post("/create-recipe", { args });
+      const data = response.data;
+
+      if (data.response === "Success") {
+        // navigation.navigate("");
+        console.log("hi!")
+      }
     }
   }
 
