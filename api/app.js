@@ -21,10 +21,7 @@ app.get("/", (req, res) => {
   res.send("Hello World!");
 });
 
-app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`);
-});
-
+// Database connection
 const DB = require("./DBConnection");
 
 dotenv.config();
@@ -35,14 +32,63 @@ function generateAccessToken(username, id) {
   });
 }
 
+// Function to get a specific recipe by ID along with its ingredients
+function getRecipeWithIngredients(recipeId, res) {
+    const queryRecipe = `SELECT * FROM recipes WHERE id='${recipeId}'`;
+    const queryIngredients = `
+        SELECT *
+        FROM ingredients_to_recipes
+        LEFT JOIN ingredients ON ingredients_to_recipes.ingredient_id=ingredients.id
+        WHERE ingredients_to_recipes.recipe_id='${recipeId}'
+    `;
+
+    // Fetch recipe details
+    DB.submitBasicQuery(queryRecipe, (recipeResults) => {
+        if (recipeResults.length === 1) {
+            // Fetch ingredients if the recipe exists
+            DB.submitBasicQuery(queryIngredients, (ingredientsResults) => {
+                if (ingredientsResults.length > 0) {
+                    const recipe = recipeResults[0];
+                    res.send({
+                        response: "Success",
+                        recipe: {
+                            id: recipe.id,
+                            title: recipe.title,
+                            method: recipe.method,
+                            notes: recipe.notes,
+                            timePrep: recipe.time_prep,
+                            timeCook: recipe.time_cook,
+                            timeWait: recipe.time_wait,
+                            image: recipe.image,
+                            categoryDiet: recipe.category_diet,
+                            categoryStyle: recipe.category_style,
+                            ingredients: ingredientsResults,
+                        },
+                    });
+                } else {
+                    res.send({ response: "No ingredients found for this recipe." });
+                }
+            });
+        } else {
+            res.send({ response: "No recipe found with this ID." });
+        }
+    });
+}
+
+
 function getAllRecipes(res) {
-  const query = "SELECT * FROM recipes";
+  const query = `
+    SELECT id, title, image, category_diet, category_style
+    FROM recipes;
+  `
+
   DB.submitBasicQuery(query, (results) => {
-  console.log({results});
+    console.log({ results });
+
     if (results.length > 0) {
       res.send(results);
     } else {
-      res.send("No recipes found");
+      res.send({response: "No recipes found"});
     }
   });
 }
@@ -68,14 +114,26 @@ function login(email, password, res) {
   });
 }
 
+// Existing endpoint to get all recipes
 app.get("/recipes", (_req, res) => {
   console.log(1);
   getAllRecipes(res);
-
 });
 
+// New endpoint to get a specific recipe by ID with ingredients
+app.get("/recipes/:id/", (req, res) => {
+    const recipeId = req.params.id; // Get recipe ID from request parameters
+    getRecipeWithIngredients(recipeId, res); // Call the function with recipeId and response object
+});
+
+
+// Endpoint to handle login
 app.use("/login", (req, res) => {
   const email = req.body.args.email;
   const password = req.body.args.password;
   login(email, password, res);
+});
+
+app.listen(port, () => {
+  console.log(`Example app listening on port ${port}`);
 });

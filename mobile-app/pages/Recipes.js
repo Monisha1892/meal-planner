@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, ScrollView } from "react-native";
+import { View, Text, StyleSheet, ScrollView, Image } from "react-native";
 import { Card, Button } from "react-native-elements";
 import axios from "axios";
 import NavigationBar from "./NavigationBar";
@@ -11,6 +11,9 @@ const api = axios.create({
 export default function Recipes({ navigation }) {
   // State to store all recipes
   const [recipes, setRecipes] = useState([]);
+
+  //image error handling
+  const [imageError, setImageError] = useState({});
 
   useEffect(() => {
     const fetchRecipes = async () => {
@@ -29,23 +32,36 @@ export default function Recipes({ navigation }) {
   const handleCardPress = (recipe) => {
     console.log("Recipe clicked: ", recipe.title);
     // Example: Navigate to Recipe Details screen with the selected recipe
-    navigation.navigate('RecipeDetails', { recipe });
+    navigation.navigate('RecipeDetails', { recipeId: recipe.id });
+  };
+
+  //handle image loading error and set fallback image
+  const handleImageError = (index) => {
+   setImageError((prevErrors) => ({
+    ...prevErrors,
+    [index]: true, // mark that the image at this index failed to load
+   }));
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.pageTitle}>Recipes Page</Text>
 
       {/* Displaying all the recipes */}
       <ScrollView>
         {recipes.length > 0 ? (
           recipes.map((recipe, index) => (
             <Card key={index} containerStyle={styles.card}>
-              {/* Recipe Image */}
+              {/* Recipe Image with error handling*/}
               {recipe.image && (
-                <Card.Image
-                  source={{ uri: recipe.image }}
+                <Image
+                  source={{
+                   uri: imageError[index]
+                    ? "https://via.placeholder.com/200" // NEW: Fallback image URL"
+                    :recipe.image,
+                    }}
                   style={styles.image}
+                  resizeMode="cover" // Ensures image covers the container uniformly
+                  onError={() => handleImageError(index)}
                 />
               )}
 
@@ -82,36 +98,37 @@ export default function Recipes({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f5f5f5",
-  },
-  pageTitle: {
-    fontSize: 24,
-    fontWeight: "bold",
-    textAlign: "center",
-    marginVertical: 10,
+    backgroundColor: "#FFFFFF",
   },
   card: {
     borderRadius: 10,
     padding: 15,
+    marginBottom: 10,
+    backgroundColor: "#FFFFFF",
   },
   image: {
-    height: 200,
+    height: 200, // Fixed height for uniformity
+    width: "100%", // Full width of the card
     borderRadius: 10,
+    marginBottom: 10, // Add margin between image and text
   },
   title: {
     fontSize: 18,
     fontWeight: "bold",
     marginTop: 10,
+    textAlign: "center",
+    color: "#20B2AA",
   },
   categoryText: {
     fontSize: 14,
+    fontWeight: "bold",
     marginTop: 5,
-    color: "#666",
+    color: "#20B2AA",
+    textAlign: "center",
   },
   button: {
-    backgroundColor: "#007BFF",
+    backgroundColor: "#20B2AA",
     marginTop: 10,
     borderRadius: 5,
   },
 });
-

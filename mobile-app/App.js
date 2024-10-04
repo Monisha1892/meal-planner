@@ -165,8 +165,8 @@ export default function App() {
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="UserAccount" component={UserAccountScreen} />
         <Stack.Screen name="Recipes" component={Recipes} />
-        <Stack.Screen name="RecipeDetails" component={RecipeDetails} />
-        <Stack.Screen name="LoginForm" component={LoginForm} />
+        <Stack.Screen name="RecipeDetails" component={RecipeDetails} options={{ title: 'Recipe Details'}} />
+        <Stack.Screen name="LoginForm" component={LoginForm} options={{ title: 'Login form'}} />
       </Stack.Navigator>
     </NavigationContainer>
   );
