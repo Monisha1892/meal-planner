@@ -114,8 +114,6 @@ function login(email, password, res) {
   });
 }
 
-// Existing endpoint to get all recipes
-
 function createUser(email, firstName, lastName, password, res) {
   const checkExistingUserQuery = `SELECT * FROM users WHERE email='${email}'`;
   DB.submitBasicQuery(checkExistingUserQuery, (results) => {
