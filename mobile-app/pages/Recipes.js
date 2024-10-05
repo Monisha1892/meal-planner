@@ -12,7 +12,8 @@ import axios from "axios";
 import NavigationBar from "./NavigationBar";
 
 const api = axios.create({
-  baseURL: "http://192.168.56.1:3011",
+  baseURL: "http://localhost:3011",
+  // baseURL: "http://192.168.56.1:3011",
 });
 
 export default function Recipes({ navigation }) {
@@ -53,9 +54,9 @@ export default function Recipes({ navigation }) {
   return (
     <View style={styles.container}>
       <Button
-        title="Create Recipe"
+        title="Search"
         onPress={() =>
-          navigation.navigate("RecipeCreateOrEdit", { mode: "create" })
+          navigation.navigate()
         }
       />
       {/* Displaying all the recipes */}

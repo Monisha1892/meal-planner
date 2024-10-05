@@ -84,7 +84,7 @@ function getAllRecipes(res) {
 
   DB.submitBasicQuery(query, (results) => {
     console.log({ results });
-
+    
     if (results.length > 0) {
       res.send(results);
     } else {
@@ -125,7 +125,7 @@ function createUser(email, firstName, lastName, password, res) {
     }
     const insertQuery = `
       INSERT INTO users (email, first_name, last_name, password) 
-      VALUES (${email}, ${firstName}, ${lastName}, ${password})
+      VALUES ('${email}', '${firstName}', '${lastName}', '${password}')
     `;
 
     DB.submitBasicQuery(insertQuery, (results) => {
@@ -142,20 +142,6 @@ function createUser(email, firstName, lastName, password, res) {
         return;
       }
     });
-  });
-}
-
-function createRecipe(data, res) {
-  const insertIntoRecipe = `
-    INSERT INTO recipes (owner_user, title, method, notes, time_prep, time_cook, time_wait, image, category_diet, category_style)
-    VALUES (${data.ownerId}, ${data.title}, ${data.method}, ${data.notes}, ${data.timePrep}, ${data.timeWait}, ${data.image}, ${data.categoryDiet}, ${data.categoryStyle})
-  `;
-  DB.submitBasicQuery(insertIntoRecipe, (results) => {
-    if (results) {
-      res.send({ response: "Success" });
-      return;
-    }
-    res.send({response: "Could not create recipe."})
   });
 }
 
@@ -190,9 +176,4 @@ app.post("/signup", (req, res) => {
   const password = req.body.args.password;
 
   createUser(email, firstName, lastName, password, res);
-});
-
-app.post("/create-recipe", (req, res) => {
-  const data = req.body.args;
-  createRecipe(data, res)
 });

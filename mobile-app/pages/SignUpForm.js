@@ -1,9 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { Alert, SafeAreaView, Text, View } from "react-native";
-import { Pressable, TextInput } from "react-native-gesture-handler";
+import {
+  Alert,
+  SafeAreaView,
+  Text,
+  View,
+  TextInput,
+  Pressable,
+} from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
 
 const api = axios.create({
   baseURL: "http://localhost:3011",
+  //   baseURL: "http://192.168.56.1:3011",
 });
 
 export default function SignUpForm({ route, navigation }) {
@@ -22,6 +31,7 @@ export default function SignUpForm({ route, navigation }) {
 
     if (isFormValid) {
       setSubmitting(true);
+      console.log({ firstName, lastName, email, password, confirmPassword });
     }
   }
 
@@ -71,11 +81,15 @@ export default function SignUpForm({ route, navigation }) {
 
     setErrors(errorRecord);
     setIsFormValid(Object.keys(errorRecord).length === 0);
+    // console.log(errors, errorRecord)
   }
 
   useEffect(() => {
+    console.log(1);
     if (submitting === true) {
+      console.log(2);
       const signUp = async () => {
+        console.log(3);
         const response = await api.post("/signup", {
           args: { email, firstName, lastName, password },
         });
@@ -148,6 +162,15 @@ export default function SignUpForm({ route, navigation }) {
         <Pressable onPress={handleSubmit}>
           <Text>Sign Up</Text>
         </Pressable>
+      </View>
+
+      <View>
+        {/* Display error messages */}
+        {Object.values(errors).map((error, index) => (
+          <Text key={index} style={styles.error}>
+            {error}
+          </Text>
+        ))}
       </View>
     </SafeAreaView>
   );
