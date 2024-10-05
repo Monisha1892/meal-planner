@@ -1,12 +1,9 @@
 import React, { useEffect, useState } from "react";
 import {
   Alert,
-  Button,
   Image,
   Pressable,
   SafeAreaView,
-  StyleSheet,
-  Switch,
   Text,
   TextInput,
   View,
@@ -85,7 +82,7 @@ export default function LoginForm({ route, navigation }) {
       </View>
       <View>
         <Pressable onPress={handleSubmit}>
-          <Text>LOGIN</Text>
+          <Text>Sign In</Text>
         </Pressable>
         <Text>
           Don't Have Account?<Text> Sign Up</Text>

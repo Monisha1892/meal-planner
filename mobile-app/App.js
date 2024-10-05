@@ -13,10 +13,11 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import SignOutButton from "./components/SignOutButton";
 import LoginForm from "./pages/LoginForm";
-import UserAccount from "./pages/UserAccount";
 import Recipes from "./pages/Recipes";
 import NavigationBar from "./pages/NavigationBar";
 import RecipeDetails from "./pages/RecipeDetails";
+import SignUpForm from "./pages/SignUpForm";
+import SearchScreen from "./pages/SearchScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -70,7 +71,9 @@ function HomeScreen({ navigation }) {
         <View style={styles.innerContainer}>
           <Text style={styles.homescreenText}>Yummify your recipes!!!</Text>
           <View style={styles.imageContainer}>
-            <TouchableOpacity onPress={() => navigation.navigate("UserAccount")}>
+            <TouchableOpacity
+              onPress={() => navigation.navigate("UserAccount")}
+            >
               <Image
                 source={require("./assets/user-account.jpeg")}
                 style={styles.image}
@@ -85,7 +88,7 @@ function HomeScreen({ navigation }) {
           </View>
         </View>
       </ImageBackground>
-     <NavigationBar navigation={navigation} />
+      <NavigationBar navigation={navigation} />
     </View>
   );
 }
@@ -140,13 +143,13 @@ function UserAccountScreen({ navigation }) {
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.beginButton}
-            onPress={() => navigation.navigate("SignUp")}
+            onPress={() => navigation.navigate("SignUp", { setIsSignedIn })}
           >
             <Text style={styles.buttonText}>Sign Up</Text>
           </TouchableOpacity>
         </>
       )}
-     <NavigationBar navigation={navigation} />
+      <NavigationBar navigation={navigation} />
     </View>
   );
 }
@@ -165,8 +168,14 @@ export default function App() {
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="UserAccount" component={UserAccountScreen} />
         <Stack.Screen name="Recipes" component={Recipes} />
-        <Stack.Screen name="RecipeDetails" component={RecipeDetails} options={{ title: 'Recipe Details'}} />
-        <Stack.Screen name="LoginForm" component={LoginForm} options={{ title: 'Login form'}} />
+        <Stack.Screen name="RecipeDetails" component={RecipeDetails} />
+        {/* <Stack.Screen name="Settings" component={SettingsScreen} /> */}
+        <Stack.Screen name="Search" component={SearchScreen} />
+        {/* <Stack.Screen name="SearchByQuery" component={SearchByQueryScreen} /> */}
+        {/* <Stack.Screen name="SearchByIngredient" component={SearchByIngredientScreen} /> */}
+        {/* <Stack.Screen name="SearchByImage" component={SearchByImageScreen} /> */}
+        <Stack.Screen name="LoginForm" component={LoginForm} />
+        <Stack.Screen name="SignUp" component={SignUpForm} />
       </Stack.Navigator>
     </NavigationContainer>
   );
