@@ -5,7 +5,8 @@ const dbConnect = {
   host: "localhost",
   port: "3306",
   user: "root",
-  password: "Moni_1892",
+  // password: "Moni_1892",
+  password: "root-password",
   database: "meal_planner",
 };
 
