@@ -18,6 +18,7 @@ import NavigationBar from "./pages/NavigationBar";
 import RecipeDetails from "./pages/RecipeDetails";
 import SignUpForm from "./pages/SignUpForm";
 import SearchScreen from "./pages/SearchScreen";
+import IngredientDetailsScreen from "./pages/IngredientDetailsScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -168,12 +169,13 @@ export default function App() {
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="UserAccount" component={UserAccountScreen} />
         <Stack.Screen name="Recipes" component={Recipes} />
-        <Stack.Screen name="RecipeDetails" component={RecipeDetails} />
+        <Stack.Screen name="RecipeDetails" component={RecipeDetails} options={{ title: 'Recipe Details' }}/>
         {/* <Stack.Screen name="Settings" component={SettingsScreen} /> */}
-        <Stack.Screen name="Search" component={SearchScreen} />
+        <Stack.Screen name="SearchScreen" component={SearchScreen} options={{ title: 'Search Screen' }}/>
         {/* <Stack.Screen name="SearchByQuery" component={SearchByQueryScreen} /> */}
         {/* <Stack.Screen name="SearchByIngredient" component={SearchByIngredientScreen} /> */}
         {/* <Stack.Screen name="SearchByImage" component={SearchByImageScreen} /> */}
+        <Stack.Screen name="IngredientDetailsScreen" component={IngredientDetailsScreen} options={{ title: 'Ingredient Details' }}/>
         <Stack.Screen name="LoginForm" component={LoginForm} />
         <Stack.Screen name="SignUp" component={SignUpForm} />
       </Stack.Navigator>
