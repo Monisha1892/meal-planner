@@ -21,14 +21,14 @@ CREATE TABLE recipes (
     id INT AUTO_INCREMENT PRIMARY KEY,
     owner_user INT, -- Foreign key reference to the 'users' table
     title VARCHAR(255) NOT NULL,
-    method LONGTEXT, 
+    method LONGTEXT,
     notes LONGTEXT,
     time_prep VARCHAR(100),
     time_cook VARCHAR(100),
     time_wait VARCHAR(100),
     image VARCHAR(255),
     category_diet SET('VEGETARIAN', 'VEGAN', 'PALEO', 'LOW_FAT', 'HALAL', 'KOSHER', 'LOW_CARB', 'GLUTEN_FREE'),
-    category_style SET('COOKING', 'BAKING', 'MIXOLOGY'),
+    category_style SET('COOKING', 'BAKING', 'MIXOLOGY', 'GRILLING', 'STIR-FRY', 'SALAD'),
     FOREIGN KEY (owner_user) REFERENCES users(id)
 );
 
