@@ -19,6 +19,7 @@ import RecipeDetails from "./pages/RecipeDetails";
 import SignUpForm from "./pages/SignUpForm";
 import SearchScreen from "./pages/SearchScreen";
 import IngredientDetailsScreen from "./pages/IngredientDetailsScreen";
+import SearchByImage from "./pages/SearchByImage";
 
 const Stack = createNativeStackNavigator();
 
@@ -176,6 +177,7 @@ export default function App() {
         {/* <Stack.Screen name="SearchByIngredient" component={SearchByIngredientScreen} /> */}
         {/* <Stack.Screen name="SearchByImage" component={SearchByImageScreen} /> */}
         <Stack.Screen name="IngredientDetailsScreen" component={IngredientDetailsScreen} options={{ title: 'Ingredient Details' }}/>
+        <Stack.Screen name="SearchByImage" component={SearchByImage} />
         <Stack.Screen name="LoginForm" component={LoginForm} />
         <Stack.Screen name="SignUp" component={SignUpForm} />
       </Stack.Navigator>
