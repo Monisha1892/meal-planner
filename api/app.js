@@ -235,6 +235,79 @@ function createUser(email, firstName, lastName, password, res) {
   });
 }
 
+function favorite(recipeId, userId, res) {
+  const checkExistingQuery = `
+    SELECT * FROM favorite_recipes 
+    WHERE user_id=${userId} AND recipe_id=${recipeId}
+  `;
+  DB.submitBasicQuery(checkExistingQuery, (results) => {
+    if (results.length > 0) {
+      res.send({ response: "Recipe already saved to favorites" });
+      return;
+    }
+    const insert = `
+      INSERT INTO favorite_recipes (user_id, recipe_id)
+      VALUES ('${userId}', '${recipeId}')
+    `;
+
+    DB.submitBasicQuery(insert, (results) => {
+      if (results) {
+        res.send({
+          response: "Recipe successfully added to favorites",
+          favoriteId: results.id,
+        });
+      }
+    });
+  });
+}
+
+function unfavorite(faveId, res) {
+  const checkIfExisting = `
+    SELECT * FROM favorite_recipes 
+    WHERE id=${faveId}
+  `;
+  DB.submitBasicQuery(checkIfExisting, (results) => {
+    if (results.length > 0) {
+      res.send({ response: "Could not find recipe" });
+      return;
+    }
+
+    const deleteQuery = `
+      DELETE FROM favorite_recipes WHERE id=${faveId}
+    `;
+    DB.submitBasicQuery(deleteQuery, (results) => {
+      if (results) {
+        res.send({ response: "Success" });
+      }
+    });
+  });
+}
+
+function getUser(userId, res) {
+  const query = `SELECT first_name, last_name FROM users WHERE id=${userId}`;
+  DB.submitBasicQuery(query, (userResults) => {
+    if (userResults.length !== 1) {
+      res.send({ response: "Could not find user" });
+      return;
+    }
+
+    const favoritesQuery = `
+      SELECT recipes.id, recipes.title, recipes.image
+      FROM favorite_recipes
+      LEFT JOIN recipes ON favorite_recipes.recipe_id=recipes.id
+      WHERE favorite_recipe.user_id='${userId}'
+    `;
+    DB.submitBasicQuery(favoritesQuery, (results) => {
+      res.send({
+        response: "Success",
+        user: userResults[0],
+        favorites: results,
+      });
+      return;
+    });
+  });
+}
+
 app.get("/recipes", (_req, res) => {
   console.log(1);
   getAllRecipes(res);
@@ -242,7 +315,7 @@ app.get("/recipes", (_req, res) => {
 
 // New endpoint to get a specific recipe by ID with ingredients
 app.get("/recipes/:id/", (req, res) => {
-  console.log("I WAS CALLED")
+  console.log("I WAS CALLED");
   const recipeId = req.params.id; // Get recipe ID from request parameters
   getRecipeWithIngredients(recipeId, res); // Call the function with recipeId and response object
 });
@@ -268,7 +341,22 @@ app.get("/ingredients", (_req, res) => {
 // Endpoint to get ingredient by name
 app.get("/ingredients/name/:name", (req, res) => {
   const ingredientName = req.params.name;
-  getIngredientDetailsByNameWithRecipes(ingredientName, res)
+  getIngredientDetailsByNameWithRecipes(ingredientName, res);
+});
+
+app.post("/favorite", (req, res) => {
+  const recipeId = req.body.args.recipeId;
+  const userId = req.body.args.userId;
+  favorite(recipeId, userId, res);
+});
+
+app.delete("/unfavorite", (req, res) => {
+  const faveId = req.body.args.faveId;
+  unfavorite(faveId, res);
+});
+
+app.get("/user", (req, res) => {
+  const userId = req.body.args.userId;
 });
 
 app.listen(port, () => {

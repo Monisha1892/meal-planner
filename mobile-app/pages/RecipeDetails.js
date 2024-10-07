@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, ScrollView, Image } from "react-native";
+import FavoriteRecipeButton from "../components/FavoriteRecipeButton";
 
 export default function RecipeDetails({ route }) {
   const { recipeId } = route.params; // Get recipeId from route params
@@ -43,38 +44,37 @@ export default function RecipeDetails({ route }) {
   }
 
   // Destructure recipe properties
-  const { title, image, timePrep, timeCook, ingredients, method, notes } = recipe;
+  const { title, image, timePrep, timeCook, ingredients, method, notes } =
+    recipe;
 
   console.log("Method string before parsing:", method);
 
- // Ensure method is an object
- let methodSteps = [];
- if (typeof method === "string") {
-   try {
-     // Try to parse it if it's a string
-     const parsedMethod = JSON.parse(method.trim());
-     methodSteps = Object.entries(parsedMethod);
-   } catch (error) {
-     console.error("Error parsing method:", error);
-   }
- } else if (typeof method === "object" && method !== null) {
-   // If it's already an object
-   methodSteps = Object.entries(method);
- } else {
-   console.error("Method is not a valid object or string:", method);
- }
+  // Ensure method is an object
+  let methodSteps = [];
+  if (typeof method === "string") {
+    try {
+      // Try to parse it if it's a string
+      const parsedMethod = JSON.parse(method.trim());
+      methodSteps = Object.entries(parsedMethod);
+    } catch (error) {
+      console.error("Error parsing method:", error);
+    }
+  } else if (typeof method === "object" && method !== null) {
+    // If it's already an object
+    methodSteps = Object.entries(method);
+  } else {
+    console.error("Method is not a valid object or string:", method);
+  }
 
   return (
     <ScrollView style={styles.container}>
       {/* Display recipe title */}
       <Text style={styles.title}>{title}</Text>
 
+      <FavoriteRecipeButton recipeId={recipe.id}/>
+
       {/* Display recipe image */}
-      <Image
-        source={{ uri: image }}
-        style={styles.image}
-        resizeMode="cover"
-      />
+      <Image source={{ uri: image }} style={styles.image} resizeMode="cover" />
 
       {/* Display recipe times */}
       <Text style={styles.details}>Prep Time: {timePrep || "N/A"}</Text>
@@ -96,7 +96,8 @@ export default function RecipeDetails({ route }) {
       {methodSteps.length > 0 ? (
         methodSteps.map(([step, instruction], index) => (
           <Text key={index} style={styles.method}>
-            {`${step}: ${instruction}`} {/* Ensure the step and instruction are displayed correctly */}
+            {`${step}: ${instruction}`}{" "}
+            {/* Ensure the step and instruction are displayed correctly */}
           </Text>
         ))
       ) : (
@@ -104,7 +105,9 @@ export default function RecipeDetails({ route }) {
       )}
 
       {/* Display any additional notes */}
-      <Text style={styles.details}>Notes: {notes || "No notes available."}</Text>
+      <Text style={styles.details}>
+        Notes: {notes || "No notes available."}
+      </Text>
     </ScrollView>
   );
 }
@@ -122,7 +125,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   image: {
-    width: '100%',
+    width: "100%",
     height: 200,
     borderRadius: 10,
     marginBottom: 20,
