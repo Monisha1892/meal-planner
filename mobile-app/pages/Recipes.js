@@ -7,13 +7,14 @@ import {
   ScrollView,
   Image,
 } from "react-native";
-import { Card, Button } from "react-native-elements";
+import { Card} from "react-native-elements";
 import axios from "axios";
 import NavigationBar from "./NavigationBar";
+import SearchScreen from "./SearchScreen"
 
 const api = axios.create({
-  baseURL: "http://localhost:3011",
-  // baseURL: "http://192.168.56.1:3011",
+  //baseURL: "http://localhost:3011",
+  baseURL: "http://192.168.56.1:3011",
 });
 
 export default function Recipes({ navigation }) {
@@ -56,7 +57,7 @@ export default function Recipes({ navigation }) {
       <Button
         title="Search"
         onPress={() =>
-          navigation.navigate()
+          navigation.navigate("SearchScreen")
         }
       />
       {/* Displaying all the recipes */}
