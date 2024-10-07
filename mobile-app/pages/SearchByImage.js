@@ -65,7 +65,9 @@ export default function SearchByImage({ navigation }) {
       );
 
       // console.log(response.data.outputs[0].data.concepts[0].name);
-      Alert.alert(response.data.outputs[0].data.concepts[0].name)
+      navigation.navigate("IngredientDetailsScreen", {
+        ingredientName: response.data.outputs[0].data.concepts[0].name.toUpperCase(),
+      });
     };
     if (submitting) {
       getIdentification(image.base64);
@@ -81,10 +83,18 @@ export default function SearchByImage({ navigation }) {
               source={{ uri: image.uri }}
               style={{ width: 300, height: 300 }}
             />
-            <Button title="Identify" onPress={handleIdentify} />
+            <Button
+              title="Identify"
+              onPress={handleIdentify}
+              buttonStyle={styles.buttonStyle}
+            />
           </View>
         )}
-        <Button title="Choose Photo" onPress={handleChoosePhoto} />
+        <Button
+          title="Choose Photo"
+          onPress={handleChoosePhoto}
+          buttonStyle={styles.buttonStyle}
+        />
       </View>
       <NavigationBar navigation={navigation} />
     </View>
@@ -95,5 +105,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#FFFFFF",
+  },
+  buttonStyle: {
+    backgroundColor: "#20B2AA",
+    marginTop: 10,
+    borderRadius: 5,
   },
 });
