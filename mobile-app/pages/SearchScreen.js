@@ -29,12 +29,8 @@ export default function SearchScreen({ navigation }) {
   return (
     <View style={styles.container}>
       <View style={styles.buttonContainer}>
-        <Button
-          title="Search by Ingredient Image"
-          onPress={() => navigation.navigate("SearchByImage")}
-        />
         <Card containerStyle={styles.card}>
-          <Card.Title>Search by Query</Card.Title>
+          <Card.Title>Search by Recipe Name</Card.Title>
           <Card.Divider />
           <TextInput
             style={styles.input}
@@ -45,6 +41,16 @@ export default function SearchScreen({ navigation }) {
           <Button
             title="Search"
             onPress={() => console.log("Searching:", searchQuery)}
+            containerStyle={styles.buttonStyle}
+          />
+        </Card>
+
+        <Card containerStyle={styles.card}>
+          <Card.Title>Search by Ingredient Image</Card.Title>
+          <Card.Divider />
+          <Button
+            title="Search"
+            onPress={() => navigation.navigate("SearchByImage")}
             containerStyle={styles.buttonStyle}
           />
         </Card>

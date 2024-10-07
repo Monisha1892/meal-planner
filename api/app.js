@@ -34,116 +34,156 @@ function generateAccessToken(username, id) {
 
 // Function to get a specific recipe by ID along with its ingredients
 function getRecipeWithIngredients(recipeId, res) {
-    const queryRecipe = `SELECT * FROM recipes WHERE id='${recipeId}'`;
-    const queryIngredients = `
+  const queryRecipe = `SELECT * FROM recipes WHERE id='${recipeId}'`;
+  const queryIngredients = `
         SELECT *
         FROM ingredients_to_recipes
         LEFT JOIN ingredients ON ingredients_to_recipes.ingredient_id=ingredients.id
         WHERE ingredients_to_recipes.recipe_id='${recipeId}'
     `;
 
-    // Fetch recipe details
-    DB.submitBasicQuery(queryRecipe, (recipeResults) => {
-        if (recipeResults.length === 1) {
-            // Fetch ingredients if the recipe exists
-            DB.submitBasicQuery(queryIngredients, (ingredientsResults) => {
-                if (ingredientsResults.length > 0) {
-                    const recipe = recipeResults[0];
-                    res.send({
-                        response: "Success",
-                        recipe: {
-                            id: recipe.id,
-                            title: recipe.title,
-                            method: recipe.method,
-                            notes: recipe.notes,
-                            timePrep: recipe.time_prep,
-                            timeCook: recipe.time_cook,
-                            timeWait: recipe.time_wait,
-                            image: recipe.image,
-                            categoryDiet: recipe.category_diet,
-                            categoryStyle: recipe.category_style,
-                            ingredients: ingredientsResults,
-                        },
-                    });
-                } else {
-                    res.send({ response: "No ingredients found for this recipe." });
-                }
-            });
+  // Fetch recipe details
+  DB.submitBasicQuery(queryRecipe, (recipeResults) => {
+    if (recipeResults.length === 1) {
+      // Fetch ingredients if the recipe exists
+      DB.submitBasicQuery(queryIngredients, (ingredientsResults) => {
+        if (ingredientsResults.length > 0) {
+          const recipe = recipeResults[0];
+          res.send({
+            response: "Success",
+            recipe: {
+              id: recipe.id,
+              title: recipe.title,
+              method: recipe.method,
+              notes: recipe.notes,
+              timePrep: recipe.time_prep,
+              timeCook: recipe.time_cook,
+              timeWait: recipe.time_wait,
+              image: recipe.image,
+              categoryDiet: recipe.category_diet,
+              categoryStyle: recipe.category_style,
+              ingredients: ingredientsResults,
+            },
+          });
         } else {
-            res.send({ response: "No recipe found with this ID." });
+          res.send({ response: "No ingredients found for this recipe." });
         }
-    });
+      });
+    } else {
+      res.send({ response: "No recipe found with this ID." });
+    }
+  });
 }
-
 
 function getAllRecipes(res) {
   const query = `
     SELECT id, title, image, category_diet, category_style
     FROM recipes;
-  `
+  `;
 
   DB.submitBasicQuery(query, (results) => {
     console.log({ results });
-    
+
     if (results.length > 0) {
       res.send(results);
     } else {
-      res.send({response: "No recipes found"});
+      res.send({ response: "No recipes found" });
     }
   });
 }
 
 // Function to get all ingredients
 function getAllIngredients(res) {
-    const query = `SELECT id, name FROM ingredients;`; // Fetch only ID and name for dropdown
+  const query = `SELECT id, name FROM ingredients;`; // Fetch only ID and name for dropdown
 
-    DB.submitBasicQuery(query, (results) => {
-        console.log({ results });
+  DB.submitBasicQuery(query, (results) => {
+    console.log({ results });
 
-        if (results.length > 0) {
-            res.send(results);
-        } else {
-            res.send({ response: "No ingredients found" });
-        }
-    });
+    if (results.length > 0) {
+      res.send(results);
+    } else {
+      res.send({ response: "No ingredients found" });
+    }
+  });
 }
 
 function getIngredientDetailsWithRecipes(ingredientId, res) {
-    const ingredientQuery = `SELECT * FROM ingredients WHERE id='${ingredientId}'`; // Using parameterized query
-    const recipeQuery = `
+  const ingredientQuery = `SELECT * FROM ingredients WHERE id='${ingredientId}'`; // Using parameterized query
+  const recipeQuery = `
         SELECT recipes.id, recipes.title, recipes.image
         FROM ingredients_to_recipes
         LEFT JOIN recipes ON ingredients_to_recipes.recipe_id=recipes.id
         WHERE ingredients_to_recipes.ingredient_id='${ingredientId}'`;
 
-    // Fetch ingredient details
-    DB.submitBasicQuery(ingredientQuery,(ingredientResults, error) => {
-        console.log("Ingredients with recipes api");
+  // Fetch ingredient details
+  DB.submitBasicQuery(ingredientQuery, (ingredientResults, error) => {
+    console.log("Ingredients with recipes api");
+    if (error) {
+      console.error("Database error:", error); // Log database error
+      return res
+        .status(500)
+        .send({ response: "Database error while fetching ingredient." });
+    }
+
+    if (ingredientResults.length === 1) {
+      // Fetch associated recipes if the ingredient exists
+      DB.submitBasicQuery(recipeQuery, (recipeResults, error) => {
         if (error) {
-            console.error("Database error:", error); // Log database error
-            return res.status(500).send({ response: "Database error while fetching ingredient." });
+          console.error("Database error:", error); // Log database error
+          return res
+            .status(500)
+            .send({ response: "Database error while fetching recipes." });
         }
 
-        if (ingredientResults.length === 1) {
-            // Fetch associated recipes if the ingredient exists
-            DB.submitBasicQuery(recipeQuery,  (recipeResults, error) => {
-                if (error) {
-                    console.error("Database error:", error); // Log database error
-                    return res.status(500).send({ response: "Database error while fetching recipes." });
-                }
-
-                res.send({
-                    ingredient: ingredientResults[0],
-                    recipes: recipeResults,
-                });
-            });
-        } else {
-            res.status(404).send({ response: "No ingredient found with this ID." });
-        }
-    });
+        res.send({
+          ingredient: ingredientResults[0],
+          recipes: recipeResults,
+        });
+      });
+    } else {
+      res.status(404).send({ response: "No ingredient found with this ID." });
+    }
+  });
 }
 
+function getIngredientDetailsByNameWithRecipes(ingredientName, res) {
+  const ingredientQuery = `SELECT * FROM ingredients WHERE name='${ingredientName}'`; // Using parameterized query
 
+  // Fetch ingredient details
+  DB.submitBasicQuery(ingredientQuery, (ingredientResults, error) => {
+    console.log("Ingredients with recipes api");
+    if (error) {
+      console.error("Database error:", error); // Log database error
+      return res
+        .status(500)
+        .send({ response: "Database error while fetching ingredient." });
+    }
+
+    if (ingredientResults.length === 1) {
+      const recipeQuery = `
+      SELECT recipes.id, recipes.title, recipes.image
+      FROM ingredients_to_recipes
+      LEFT JOIN recipes ON ingredients_to_recipes.recipe_id=recipes.id
+      WHERE ingredients_to_recipes.ingredient_id='${ingredientResults[0].name}'`;
+      // Fetch associated recipes if the ingredient exists
+      DB.submitBasicQuery(recipeQuery, (recipeResults, error) => {
+        if (error) {
+          console.error("Database error:", error); // Log database error
+          return res
+            .status(500)
+            .send({ response: "Database error while fetching recipes." });
+        }
+
+        res.send({
+          ingredient: ingredientResults[0],
+          recipes: recipeResults,
+        });
+      });
+    } else {
+      res.status(404).send({ response: "No ingredient found with this Name." });
+    }
+  });
+}
 
 function login(email, password, res) {
   const query = `SELECT * FROM users WHERE email='${email}'`;
@@ -202,14 +242,15 @@ app.get("/recipes", (_req, res) => {
 
 // New endpoint to get a specific recipe by ID with ingredients
 app.get("/recipes/:id/", (req, res) => {
-    const recipeId = req.params.id; // Get recipe ID from request parameters
-    getRecipeWithIngredients(recipeId, res); // Call the function with recipeId and response object
+  console.log("I WAS CALLED")
+  const recipeId = req.params.id; // Get recipe ID from request parameters
+  getRecipeWithIngredients(recipeId, res); // Call the function with recipeId and response object
 });
 
 // New endpoint to get ingredient details and associated recipes by ID
 app.get("/ingredients/:id", (req, res) => {
-    const ingredientId = req.params.id; // Get ingredient ID from request parameters
-    getIngredientDetailsWithRecipes(ingredientId, res); // Call the function with ingredientId and response object
+  const ingredientId = req.params.id; // Get ingredient ID from request parameters
+  getIngredientDetailsWithRecipes(ingredientId, res); // Call the function with ingredientId and response object
 });
 
 // Endpoint to handle login
@@ -221,9 +262,14 @@ app.use("/login", (req, res) => {
 
 // New endpoint to get all ingredients
 app.get("/ingredients", (_req, res) => {
-    getAllIngredients(res);
+  getAllIngredients(res);
 });
 
+// Endpoint to get ingredient by name
+app.get("/ingredients/name/:name", (req, res) => {
+  const ingredientName = req.params.name;
+  getIngredientDetailsByNameWithRecipes(ingredientName, res)
+});
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
