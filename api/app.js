@@ -32,6 +32,21 @@ function generateAccessToken(username, id) {
   });
 }
 
+async function sha256(message) {
+  // encode as UTF-8
+  const msgBuffer = new TextEncoder().encode(message);                    
+
+  // hash the message
+  const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+
+  // convert ArrayBuffer to Array
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+
+  // convert bytes to hex string                  
+  const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+  return hashHex;
+}
+
 // Function to get a specific recipe by ID along with its ingredients
 function getRecipeWithIngredients(recipeId, res) {
   const queryRecipe = `SELECT * FROM recipes WHERE id='${recipeId}'`;
@@ -204,14 +219,15 @@ function login(email, password, res) {
 
 function createUser(email, firstName, lastName, password, res) {
   const checkExistingUserQuery = `SELECT * FROM users WHERE email='${email}'`;
-  DB.submitBasicQuery(checkExistingUserQuery, (results) => {
+  DB.submitBasicQuery(checkExistingUserQuery, async (results) => {
     if (results.length > 0) {
       res.send({ response: "Could not create user." });
       return;
     }
+    const encryptedPassword = await sha256(password)
     const insertQuery = `
       INSERT INTO users (email, first_name, last_name, password) 
-      VALUES ('${email}', '${firstName}', '${lastName}', '${password}')
+      VALUES ('${email}', '${firstName}', '${lastName}', '${encryptedPassword}')
     `;
 
     DB.submitBasicQuery(insertQuery, (results) => {
