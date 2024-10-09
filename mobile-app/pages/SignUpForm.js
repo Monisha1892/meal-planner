@@ -5,7 +5,8 @@ import {
   Text,
   View,
   TextInput,
-  Pressable,
+  Button,
+  StyleSheet,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
@@ -31,7 +32,6 @@ export default function SignUpForm({ route, navigation }) {
 
     if (isFormValid) {
       setSubmitting(true);
-      console.log({ firstName, lastName, email, password, confirmPassword });
     }
   }
 
@@ -81,15 +81,11 @@ export default function SignUpForm({ route, navigation }) {
 
     setErrors(errorRecord);
     setIsFormValid(Object.keys(errorRecord).length === 0);
-    // console.log(errors, errorRecord)
   }
 
   useEffect(() => {
-    console.log(1);
     if (submitting === true) {
-      console.log(2);
       const signUp = async () => {
-        console.log(3);
         const response = await api.post("/signup", {
           args: { email, firstName, lastName, password },
         });
@@ -99,9 +95,6 @@ export default function SignUpForm({ route, navigation }) {
         if (data.response === "Success") {
           try {
             await AsyncStorage.setItem("UserJWT", data.token);
-            const { setIsSignedIn } = route.params;
-            setIsSignedIn(true);
-
             navigation.navigate("Home");
           } catch (e) {
             console.log(e);
@@ -118,20 +111,22 @@ export default function SignUpForm({ route, navigation }) {
   }, [submitting]);
 
   return (
-    <SafeAreaView resizeMode="contain">
-      <Text>Sign Up</Text>
+    <SafeAreaView resizeMode="contain" style={styles.container}>
+      <Text style={styles.title}>Sign Up</Text>
       <View>
         <TextInput
           placeholder="FIRST NAME"
           value={firstName}
           onChangeText={setFirstName}
           autoCapitalize="none"
+          style={styles.input}
         />
         <TextInput
           placeholder="LAST NAME"
           value={lastName}
           onChangeText={setLastName}
           autoCapitalize="none"
+          style={styles.input}
         />
         <TextInput
           placeholder="EMAIL"
@@ -140,6 +135,7 @@ export default function SignUpForm({ route, navigation }) {
           autoCorrect={false}
           autoCapitalize="none"
           inputMode="email"
+          style={styles.input}
         />
         <TextInput
           placeholder="PASSWORD"
@@ -148,6 +144,7 @@ export default function SignUpForm({ route, navigation }) {
           onChangeText={setPassword}
           autoCorrect={false}
           autoCapitalize="none"
+          style={styles.input}
         />
         <TextInput
           placeholder="CONFIRM PASSWORD"
@@ -156,12 +153,11 @@ export default function SignUpForm({ route, navigation }) {
           onChangeText={setConfirmPassword}
           autoCorrect={false}
           autoCapitalize="none"
+          style={styles.input}
         />
       </View>
       <View>
-        <Pressable onPress={handleSubmit}>
-          <Text>Sign Up</Text>
-        </Pressable>
+        <Button title="Sign Up" style={styles.button} onPress={handleSubmit} />
       </View>
 
       <View>
@@ -175,3 +171,31 @@ export default function SignUpForm({ route, navigation }) {
     </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 16,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: "bold",
+    textAlign: "center",
+    color: "#FF6347",
+    marginBottom: 10,
+  },
+  button: {
+    backgroundColor: "#20B2AA",
+    marginTop: 10,
+    borderRadius: 5,
+  },
+  input: {
+    height: 60,
+    borderColor: "#ccc",
+    borderWidth: 1,
+    marginBottom: 12,
+    paddingHorizontal: 10,
+    borderRadius: 8,
+    fontSize: 16,
+  },
+});

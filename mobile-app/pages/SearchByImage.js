@@ -6,7 +6,7 @@ import {
   MODEL_VERSION_ID,
   PAT,
   USER_ID,
-} from "../context/temp.js";
+} from "../context/AI-Test.js";
 import { View, Button, StyleSheet, Image, Alert } from "react-native";
 import NavigationBar from "./NavigationBar";
 import * as ImagePicker from "expo-image-picker";
@@ -64,7 +64,6 @@ export default function SearchByImage({ navigation }) {
         { headers: { Accept: "application/json", Authorization: "Key " + PAT } }
       );
 
-      // console.log(response.data.outputs[0].data.concepts[0].name);
       navigation.navigate("IngredientDetailsScreen", {
         ingredientName: response.data.outputs[0].data.concepts[0].name.toUpperCase(),
       });

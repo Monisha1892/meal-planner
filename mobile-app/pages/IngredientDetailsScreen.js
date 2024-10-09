@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   StyleSheet,
+  ScrollView,
 } from "react-native";
 
 const IngredientDetailsScreen = ({ route, navigation }) => {
@@ -27,7 +28,6 @@ const IngredientDetailsScreen = ({ route, navigation }) => {
             throw new Error("Failed to fetch ingredient details.");
           }
           const data = await response.json();
-          console.log("Fetched ingredient details:", data);
           setIngredientDetails(data);
         } else if (ingredientName) {
           const response = await fetch(
@@ -37,7 +37,6 @@ const IngredientDetailsScreen = ({ route, navigation }) => {
             throw new Error("Failed to fetch ingredient details.");
           }
           const data = await response.json();
-          console.log("Fetched ingredient details:", data);
           setIngredientDetails(data);
         }
       } catch (error) {
@@ -72,7 +71,7 @@ const IngredientDetailsScreen = ({ route, navigation }) => {
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <Text style={styles.title}>{ingredient.name}</Text>
       <Image source={{ uri: ingredient.image }} style={styles.image} />
       <Text style={styles.nutritionText}>
@@ -94,7 +93,7 @@ const IngredientDetailsScreen = ({ route, navigation }) => {
           </TouchableOpacity>
         )}
       />
-    </View>
+    </ScrollView>
   );
 };
 

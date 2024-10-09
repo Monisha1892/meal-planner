@@ -17,6 +17,17 @@ Node.js is a cross-platform, open-source JavaScript runtime environment that can
 
 Yarn is one of the main JavaScript package managers for the Node.js JavaScript runtime environment. An alternative to the npm package manager, Yarn was created as a collaboration of Facebook, Exponent, Google, and Tilde to solve consistency, security, and performance problems with large codebase.
 
+[Install MySQL](https://dev.mysql.com/doc/refman/8.0/en/macos-installation-pkg.html) (Mac OS)
+
+[Install MySQL](https://dev.mysql.com/doc/refman/8.0/en/windows-installation.html) (Windows)
+
+MySQL is a relational database management system. It is free and open-source.
+
+[MySQL Workbench](https://dev.mysql.com/downloads/workbench/)
+
+MySQL Workbench is a visual tool to manage and access the local MySQL server. It allows you to see your data and execute queries in given text areas.
+
+
 ## Useful links and tutorials
 
 #### CLI
@@ -79,9 +90,14 @@ yarn run start
 #### API
 ```
 cd api
+yarn run install
 node app.js
 ```
 
 #### Database
 1. Start MySQL server and open Workbench.
-2. Copy and execute the `meal_planner_database.sql` and `populate_database.sql`  files
+2. Copy and execute the files in `./database` in the following order:
+    1. `meal_planner_database.sql`
+    2. `populate_database.sql`
+    3. `ingredients.sql`
+    4. `ingredients_to_recipes.sql`
