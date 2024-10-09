@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, TextInput, StyleSheet } from "react-native";
+import { View, TextInput, StyleSheet, ScrollView } from "react-native";
 import { Button, Card } from "react-native-elements";
 import NavigationBar from "./NavigationBar";
 import IngredientsDropdown from "./IngredientsDropdown"; // Ensure this is correctly imported
@@ -14,7 +14,6 @@ export default function SearchScreen({ navigation }) {
   };
 
   const handleIngredientSearch = () => {
-    console.log("I am working");
     console.log("Selected Ingredient:", selectedIngredient);
     if (selectedIngredient && selectedIngredient.value) {
       // Use 'value' instead of 'id'
@@ -28,7 +27,7 @@ export default function SearchScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <View style={styles.buttonContainer}>
+      <ScrollView style={styles.container}>
         <Card containerStyle={styles.card}>
           <Card.Title>Search by Recipe Name</Card.Title>
           <Card.Divider />
@@ -81,7 +80,7 @@ export default function SearchScreen({ navigation }) {
             containerStyle={styles.buttonStyle}
           />
         </Card>
-      </View>
+      </ScrollView>
 
       <NavigationBar navigation={navigation} />
     </View>
@@ -91,8 +90,7 @@ export default function SearchScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
-    paddingHorizontal: 20,
+    paddingBottom: 70,
   },
   buttonContainer: {
     marginBottom: 20,

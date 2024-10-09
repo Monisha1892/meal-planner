@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, ScrollView, Image } from "react-native";
+import { Text, StyleSheet, ScrollView, Image, Button } from "react-native";
 import FavoriteRecipeButton from "../components/FavoriteRecipeButton";
 
 export default function RecipeDetails({ route }) {
