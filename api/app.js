@@ -185,6 +185,50 @@ function getIngredientDetailsByNameWithRecipes(ingredientName, res) {
   });
 }
 
+
+// Function to get all diet categories
+function getDietCategories(res) {
+  const query = `SELECT DISTINCT category_diet FROM recipes;`; // Fetch distinct diet categories
+
+  DB.submitBasicQuery(query, (results) => {
+    console.log({ results });
+
+    if (results.length > 0) {
+      res.send(results.map(row => row.category_diet)); // Return only the category names
+    } else {
+      res.send({ response: "No diet categories found" });
+    }
+  });
+}
+
+// Function to fetch recipes by diet category
+function getRecipesByDietCategory(category, res) {
+  if (typeof category !== 'string' || category.trim() === '') {
+    return res.status(400).send({ response: "Invalid category" });
+  }
+
+  // Basic sanitation to escape single quotes to prevent SQL injection
+  const sanitizedCategory = category.replace(/'/g, "''");
+
+  const query = `SELECT recipes.id, recipes.title, recipes.image
+                 FROM recipes WHERE FIND_IN_SET('${sanitizedCategory}', category_diet)`;
+
+  // Log the query for debugging purposes
+  console.log("Executing Query:", query);
+
+  // Execute the query
+  DB.submitBasicQuery(query, (results) => {
+    if (results.length > 0) {
+      res.send(results); // Send the results if recipes are found
+    } else {
+      res.send({ response: "No recipes found" });
+    }
+  });
+}
+
+
+
+
 function login(email, password, res) {
   const query = `SELECT * FROM users WHERE email='${email}'`;
   DB.submitBasicQuery(query, (results) => {
@@ -332,6 +376,20 @@ app.use("/login", (req, res) => {
   const password = req.body.args.password;
   login(email, password, res);
 });
+
+// New endpoint to get all diet categories
+app.get("/categories/diet", (_req, res) => {
+  getDietCategories(res);
+});
+
+
+
+// Define the route for getting recipes by diet category
+app.get('/recipes/diet/:category', (req, res) => {
+  const category = req.params.category; // Get the category from the URL parameter
+  getRecipesByDietCategory(category, res); // Call the function to fetch recipes
+});
+
 
 // New endpoint to get all ingredients
 app.get("/ingredients", (_req, res) => {

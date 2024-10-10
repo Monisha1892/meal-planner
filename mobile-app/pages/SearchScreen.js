@@ -1,111 +1,128 @@
 import React, { useState } from "react";
-import { View, TextInput, StyleSheet } from "react-native";
+import { View, TextInput, StyleSheet, ScrollView } from "react-native";
 import { Button, Card } from "react-native-elements";
 import NavigationBar from "./NavigationBar";
 import IngredientsDropdown from "./IngredientsDropdown"; // Ensure this is correctly imported
+import RecipesDropdown from "./RecipesDropdown"; // Import the new dropdown
+import CategoriesDropdown from "./CategoriesDropdown"; // Import the categories dropdown
 
 export default function SearchScreen({ navigation }) {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedIngredient, setSelectedIngredient] = useState(null); // State for selected ingredient
+    const [searchQuery, setSearchQuery] = useState("");
+    const [selectedIngredient, setSelectedIngredient] = useState(null);
+    const [selectedRecipe, setSelectedRecipe] = useState(null);
+    const [selectedCategory, setSelectedCategory] = useState(null); // State for selected category
 
-  const handleIngredientSelect = (ingredient) => {
-    console.log("Selected Ingredient:", ingredient); // Log the selected ingredient
-    setSelectedIngredient(ingredient);
-  };
+    const handleIngredientSelect = (ingredient) => {
+        console.log("Selected Ingredient:", ingredient);
+        setSelectedIngredient(ingredient);
+    };
 
-  const handleIngredientSearch = () => {
-    console.log("I am working");
-    console.log("Selected Ingredient:", selectedIngredient);
-    if (selectedIngredient && selectedIngredient.value) {
-      // Use 'value' instead of 'id'
-      navigation.navigate("IngredientDetailsScreen", {
-        ingredientId: selectedIngredient.value,
-      });
-    } else {
-      console.log("No ingredient selected.");
-    }
-  };
+    const handleRecipeSelect = (recipe) => {
+        console.log("Selected Recipe:", recipe);
+        setSelectedRecipe(recipe);
+        navigation.navigate("RecipeDetails", { recipeId: recipe.value });
+    };
 
-  return (
-    <View style={styles.container}>
-      <View style={styles.buttonContainer}>
-        <Card containerStyle={styles.card}>
-          <Card.Title>Search by Recipe Name</Card.Title>
-          <Card.Divider />
-          <TextInput
-            style={styles.input}
-            placeholder="Enter your search query"
-            value={searchQuery}
-            onChangeText={setSearchQuery}
-          />
-          <Button
-            title="Search"
-            onPress={() => console.log("Searching:", searchQuery)}
-            containerStyle={styles.buttonStyle}
-          />
-        </Card>
+    const handleCategorySelect = (category) => {
+        console.log("Selected Category:", category);
+        setSelectedCategory(category); // Update the selected category
+    };
 
-        <Card containerStyle={styles.card}>
-          <Card.Title>Search by Ingredient Image</Card.Title>
-          <Card.Divider />
-          <Button
-            title="Search"
-            onPress={() => navigation.navigate("SearchByImage")}
-            containerStyle={styles.buttonStyle}
-          />
-        </Card>
+    const handleIngredientSearch = () => {
+        console.log("I am working");
+        console.log("Selected Ingredient:", selectedIngredient);
+        if (selectedIngredient && selectedIngredient.value) {
+            navigation.navigate("IngredientDetailsScreen", {
+                ingredientId: selectedIngredient.value,
+            });
+        } else {
+            console.log("No ingredient selected.");
+        }
+    };
 
-        <Card containerStyle={styles.card}>
-          <Card.Title>Search by Ingredient</Card.Title>
-          <Card.Divider />
-          <IngredientsDropdown onSelectIngredient={handleIngredientSelect} />
+    const searchRecipes = () => {
+        console.log("Searching recipes with query:", searchQuery);
+        // Add your recipe searching logic here
+    };
 
-          <Button
-            title="Search"
-            onPress={handleIngredientSearch} // Search button triggers navigation
-            containerStyle={styles.buttonStyle}
-          />
-        </Card>
+    const navigateToCategoryRecipes = () => {
+        console.log("Navigating to CategoryRecipesScreen with ID:", selectedCategory);
+        navigation.navigate("CategoryRecipesScreen", { categoryId: selectedCategory }); // Navigate to CategoryRecipesScreen with selected category ID
+    };
 
-        <Card containerStyle={styles.card}>
-          <Card.Title>Search by Diet</Card.Title>
-          <Card.Divider />
-          <TextInput
-            style={styles.input}
-            placeholder="Enter diet type"
-            onChangeText={(text) => console.log("Searching diet:", text)}
-          />
-          <Button
-            title="Search"
-            onPress={() => console.log("Searching diet")}
-            containerStyle={styles.buttonStyle}
-          />
-        </Card>
-      </View>
+    return (
+        <View style={styles.container}>
+            <ScrollView style={styles.scrollView}>
+                {/*<View style={styles.buttonContainer}>*/}
+                    <Card containerStyle={styles.card}>
+                        <Card.Title>Search by Recipe Name</Card.Title>
+                        <Card.Divider />
+                        <RecipesDropdown onSelectRecipe={handleRecipeSelect} />
+                        <Button
+                            title="Search"
+                            onPress={searchRecipes}
+                            containerStyle={styles.buttonStyle}
+                        />
+                    </Card>
 
-      <NavigationBar navigation={navigation} />
-    </View>
-  );
+                    <Card containerStyle={styles.card}>
+                        <Card.Title>Search by Category</Card.Title>
+                        <Card.Divider />
+                        <CategoriesDropdown onSelectCategory={handleCategorySelect} />
+                        <Button
+                            title="Search"
+                            onPress={navigateToCategoryRecipes} // Call the function to navigate
+                            containerStyle={styles.buttonStyle}
+                        />
+                    </Card>
+
+                    <Card containerStyle={styles.card}>
+                        <Card.Title>Search by Ingredient Image</Card.Title>
+                        <Card.Divider />
+                        <Button
+                            title="Search"
+                            onPress={() => navigation.navigate("SearchByImage")}
+                            containerStyle={styles.buttonStyle}
+                        />
+                    </Card>
+
+                    <Card containerStyle={styles.card}>
+                        <Card.Title>Search by Ingredient</Card.Title>
+                        <Card.Divider />
+                        <IngredientsDropdown onSelectIngredient={handleIngredientSelect} />
+                        <Button
+                            title="Search"
+                            onPress={handleIngredientSearch}
+                            containerStyle={styles.buttonStyle}
+                        />
+                    </Card>
+                {/*</View>*/}
+            </ScrollView>
+            <NavigationBar navigation={navigation} />
+        </View>
+    );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    paddingHorizontal: 20,
-  },
-  buttonContainer: {
-    marginBottom: 20,
-  },
-  card: {
-    marginVertical: 10,
-  },
-  input: {
-    height: 40,
-    borderColor: "#ccc",
-    borderWidth: 1,
-    borderRadius: 5,
-    paddingHorizontal: 10,
-    marginBottom: 10,
-  },
+    container: {
+        flex: 1,
+        paddingHorizontal: 20,
+    },
+    scrollView: {
+        flexGrow: 1,
+    },
+    buttonContainer: {
+        marginBottom: 20,
+    },
+    card: {
+        marginVertical: 10,
+    },
+    input: {
+        height: 40,
+        borderColor: "#ccc",
+        borderWidth: 1,
+        borderRadius: 5,
+        paddingHorizontal: 10,
+        marginBottom: 10,
+    },
 });
