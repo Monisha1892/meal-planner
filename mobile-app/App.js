@@ -7,6 +7,8 @@ import {
   TouchableOpacity,
   Image,
   ImageBackground,
+  ScrollView,
+  FlatList,
 } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -20,6 +22,14 @@ import SignUpForm from "./pages/SignUpForm";
 import SearchScreen from "./pages/SearchScreen";
 import IngredientDetailsScreen from "./pages/IngredientDetailsScreen";
 import CategoryRecipesScreen from "./pages/CategoryRecipesScreen";
+import SearchByImage from "./pages/SearchByImage";
+import axios from "axios";
+import { Buffer } from "buffer";
+
+const api = axios.create({
+  baseURL: "http://localhost:3011",
+  // baseURL: "http://192.168.56.1:3011",
+});
 
 const Stack = createNativeStackNavigator();
 
@@ -98,42 +108,73 @@ function HomeScreen({ navigation }) {
 // User Account Screen (including login, sign-up, sign-in)
 function UserAccountScreen({ navigation }) {
   const [isSignedIn, setIsSignedIn] = useState(false);
+  const [userName, setUserName] = useState();
+  const [favorites, setFavorites] = useState();
 
   useEffect(() => {
-    const getUserToken = async () => {
-      const token = await AsyncStorage.getItem("UserJWT");
-      if (token) {
-        setIsSignedIn(true);
+    const getUser = async () => {
+      try {
+        const token = await AsyncStorage.getItem("UserJWT");
+        if (token) {
+          setIsSignedIn(true);
+          const parts = token
+            .split(".")
+            .map((part) =>
+              Buffer.from(
+                part.replace(/-/g, "+").replace(/_/g, "/"),
+                "base64"
+              ).toString()
+            );
+          const payload = JSON.parse(parts[1]);
+          const userId = payload.username.id;
+          const response = await api.get(`/user/${userId}`);
+
+          const user = response.data.user;
+          setUserName(user.first_name + " " + user.last_name);
+          setFavorites(response.data.favorites);
+        }
+      } catch (e) {
+        console.log({ e });
       }
     };
-    getUserToken();
+    getUser();
   }, [isSignedIn]);
 
   function handleSignIn() {
-    navigation.navigate("LoginForm", { setIsSignedIn });
+    navigation.navigate("LoginForm");
+  }
+
+  function handleSignUp() {
+    navigation.navigate("SignUp");
   }
 
   return (
     <View style={styles.container}>
       {isSignedIn ? (
         <>
-          <View style={styles.imageContainer}>
-            <SignOutButton setIsSignedIn={setIsSignedIn} />
-            <TouchableOpacity
-              onPress={() => navigation.navigate("UserAccount")}
-            >
-              <Image
-                source={require("./assets/user-account.jpeg")}
-                style={styles.image}
-              />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => navigation.navigate("Recipes")}>
-              <Image
-                source={require("./assets/recipes.jpeg")}
-                style={styles.image}
-              />
-            </TouchableOpacity>
-          </View>
+          <Text style={styles.title}>{userName}</Text>
+          <SignOutButton setIsSignedIn={setIsSignedIn} />
+
+          <Text style={styles.favoritesTitle}>Favorites:</Text>
+          <ScrollView horizontal={true} style={{ flex: 1 }}>
+            <FlatList
+              data={favorites}
+              keyExtractor={(recipe) => recipe.id.toString()}
+              renderItem={({ item }) => (
+                <TouchableOpacity
+                  style={styles.card}
+                  onPress={() => handleRecipePress(item.id)}
+                >
+                  <Text style={styles.cardTitle}>{item.title}</Text>
+                  {/* You can add an image or other details here */}
+                  <Image
+                    source={{ uri: item.image }}
+                    style={styles.cardImage}
+                  />
+                </TouchableOpacity>
+              )}
+            />
+          </ScrollView>
         </>
       ) : (
         <>
@@ -145,7 +186,7 @@ function UserAccountScreen({ navigation }) {
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.beginButton}
-            onPress={() => navigation.navigate("SignUp", { setIsSignedIn })}
+            onPress={() => handleSignUp()}
           >
             <Text style={styles.buttonText}>Sign Up</Text>
           </TouchableOpacity>
@@ -170,6 +211,22 @@ export default function App() {
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="UserAccount" component={UserAccountScreen} />
         <Stack.Screen name="Recipes" component={Recipes} />
+        <Stack.Screen
+          name="RecipeDetails"
+          component={RecipeDetails}
+          options={{ title: "Recipe Details" }}
+        />
+        <Stack.Screen
+          name="SearchScreen"
+          component={SearchScreen}
+          options={{ title: "Search Screen" }}
+        />
+        <Stack.Screen
+          name="IngredientDetailsScreen"
+          component={IngredientDetailsScreen}
+          options={{ title: "Ingredient Details" }}
+        />
+        <Stack.Screen name="SearchByImage" component={SearchByImage} />
         <Stack.Screen name="RecipeDetails" component={RecipeDetails} options={{ title: 'Recipe Details' }}/>
         {/* <Stack.Screen name="Settings" component={SettingsScreen} /> */}
         <Stack.Screen name="SearchScreen" component={SearchScreen} options={{ title: 'Search Screen' }}/>
@@ -223,6 +280,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     padding: 15,
     borderRadius: 10,
+    marginBottom: 10,
   },
   buttonText: {
     fontSize: 18,
@@ -258,5 +316,40 @@ const styles = StyleSheet.create({
     resizeMode: "cover",
     position: "absolute",
     justifyContent: "center",
+  },
+  userContainer: {
+    paddingTop: 20,
+    paddingHorizontal: 20,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "red",
+    alignSelf: "center",
+  },
+  favoritesTitle: {
+    fontSize: 20,
+    marginVertical: 10,
+  },
+  card: {
+    backgroundColor: "#fff",
+    borderRadius: 10,
+    padding: 15,
+    marginBottom: 10,
+    elevation: 3, // Shadow effect on Android
+    shadowColor: "#000", // Shadow color for iOS
+    shadowOffset: { width: 0, height: 1 }, // Shadow offset
+    shadowOpacity: 0.2, // Shadow opacity
+    shadowRadius: 1, // Shadow radius
+  },
+  cardTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+  cardImage: {
+    width: "100%",
+    height: 100,
+    borderRadius: 5,
+    marginTop: 5,
   },
 });

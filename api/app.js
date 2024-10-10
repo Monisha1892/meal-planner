@@ -32,6 +32,21 @@ function generateAccessToken(username, id) {
   });
 }
 
+async function sha256(message) {
+  // encode as UTF-8
+  const msgBuffer = new TextEncoder().encode(message);                    
+
+  // hash the message
+  const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+
+  // convert ArrayBuffer to Array
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+
+  // convert bytes to hex string                  
+  const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+  return hashHex;
+}
+
 // Function to get a specific recipe by ID along with its ingredients
 function getRecipeWithIngredients(recipeId, res) {
   const queryRecipe = `SELECT * FROM recipes WHERE id='${recipeId}'`;
@@ -82,8 +97,6 @@ function getAllRecipes(res) {
   `;
 
   DB.submitBasicQuery(query, (results) => {
-    console.log({ results });
-
     if (results.length > 0) {
       res.send(results);
     } else {
@@ -97,8 +110,6 @@ function getAllIngredients(res) {
   const query = `SELECT id, name FROM ingredients;`; // Fetch only ID and name for dropdown
 
   DB.submitBasicQuery(query, (results) => {
-    console.log({ results });
-
     if (results.length > 0) {
       res.send(results);
     } else {
@@ -164,7 +175,7 @@ function getIngredientDetailsByNameWithRecipes(ingredientName, res) {
       SELECT recipes.id, recipes.title, recipes.image
       FROM ingredients_to_recipes
       LEFT JOIN recipes ON ingredients_to_recipes.recipe_id=recipes.id
-      WHERE ingredients_to_recipes.ingredient_id='${ingredientResults[0].name}'`;
+      WHERE ingredients_to_recipes.ingredient_id='${ingredientResults[0].id}'`;
       // Fetch associated recipes if the ingredient exists
       DB.submitBasicQuery(recipeQuery, (recipeResults, error) => {
         if (error) {
@@ -252,14 +263,15 @@ function login(email, password, res) {
 
 function createUser(email, firstName, lastName, password, res) {
   const checkExistingUserQuery = `SELECT * FROM users WHERE email='${email}'`;
-  DB.submitBasicQuery(checkExistingUserQuery, (results) => {
+  DB.submitBasicQuery(checkExistingUserQuery, async (results) => {
     if (results.length > 0) {
       res.send({ response: "Could not create user." });
       return;
     }
+    const encryptedPassword = await sha256(password)
     const insertQuery = `
       INSERT INTO users (email, first_name, last_name, password) 
-      VALUES ('${email}', '${firstName}', '${lastName}', '${password}')
+      VALUES ('${email}', '${firstName}', '${lastName}', '${encryptedPassword}')
     `;
 
     DB.submitBasicQuery(insertQuery, (results) => {
@@ -339,7 +351,7 @@ function getUser(userId, res) {
       SELECT recipes.id, recipes.title, recipes.image
       FROM favorite_recipes
       LEFT JOIN recipes ON favorite_recipes.recipe_id=recipes.id
-      WHERE favorite_recipe.user_id='${userId}'
+      WHERE favorite_recipes.user_id='${userId}'
     `;
     DB.submitBasicQuery(favoritesQuery, (results) => {
       res.send({
@@ -353,13 +365,11 @@ function getUser(userId, res) {
 }
 
 app.get("/recipes", (_req, res) => {
-  console.log(1);
   getAllRecipes(res);
 });
 
 // New endpoint to get a specific recipe by ID with ingredients
 app.get("/recipes/:id/", (req, res) => {
-  console.log("I WAS CALLED");
   const recipeId = req.params.id; // Get recipe ID from request parameters
   getRecipeWithIngredients(recipeId, res); // Call the function with recipeId and response object
 });
@@ -413,12 +423,13 @@ app.delete("/unfavorite", (req, res) => {
   unfavorite(faveId, res);
 });
 
-app.get("/user", (req, res) => {
-  const userId = req.body.args.userId;
+app.get("/user/:id", (req, res) => {
+  const userId = req.params.id;
+  getUser(userId, res);
 });
 
 app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`);
+  console.log(`App listening on port ${port}`);
 });
 
 app.post("/signup", (req, res) => {
