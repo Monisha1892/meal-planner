@@ -1,7 +1,7 @@
 INSERT INTO ingredients(name, image, nutritional_information)
 VALUES (
       'ONION',
-      'https://capstonemealplanner.s3.ap-southeast-2.amazonaws.com/ingredients/all+purpose+flour.jpg',
+      'https://capstonemealplanner.s3.ap-southeast-2.amazonaws.com/ingredients/onion.jpg',
       'Raw onions are very low in calories, with only 40 calories per 3.5 ounces (100 grams). By fresh weight, they are 89% water, 9% carbs, and 1.7% fiber, with tiny amounts of protein and fat.'
       ),
       (

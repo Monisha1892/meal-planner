@@ -227,13 +227,6 @@ export default function App() {
           options={{ title: "Ingredient Details" }}
         />
         <Stack.Screen name="SearchByImage" component={SearchByImage} />
-        <Stack.Screen name="RecipeDetails" component={RecipeDetails} options={{ title: 'Recipe Details' }}/>
-        {/* <Stack.Screen name="Settings" component={SettingsScreen} /> */}
-        <Stack.Screen name="SearchScreen" component={SearchScreen} options={{ title: 'Search Screen' }}/>
-        {/* <Stack.Screen name="SearchByQuery" component={SearchByQueryScreen} /> */}
-        {/* <Stack.Screen name="SearchByIngredient" component={SearchByIngredientScreen} /> */}
-        {/* <Stack.Screen name="SearchByImage" component={SearchByImageScreen} /> */}
-        <Stack.Screen name="IngredientDetailsScreen" component={IngredientDetailsScreen} options={{ title: 'Ingredient Details' }}/>
         <Stack.Screen name="CategoryRecipesScreen" component={CategoryRecipesScreen} />
         <Stack.Screen name="LoginForm" component={LoginForm} />
         <Stack.Screen name="SignUp" component={SignUpForm} />

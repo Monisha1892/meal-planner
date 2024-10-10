@@ -8,12 +8,12 @@ import CategoriesDropdown from "./CategoriesDropdown"; // Import the categories 
 
 export default function SearchScreen({ navigation }) {
     const [searchQuery, setSearchQuery] = useState("");
-    const [selectedIngredient, setSelectedIngredient] = useState(null);
+    const [selectedIngredient, setSelectedIngredient] = useState(null); //State of selected ingredient
     const [selectedRecipe, setSelectedRecipe] = useState(null);
     const [selectedCategory, setSelectedCategory] = useState(null); // State for selected category
 
     const handleIngredientSelect = (ingredient) => {
-        console.log("Selected Ingredient:", ingredient);
+        console.log("Selected Ingredient:", ingredient);  //Log the selected ingredient
         setSelectedIngredient(ingredient);
     };
 
@@ -66,17 +66,6 @@ export default function SearchScreen({ navigation }) {
                     </Card>
 
                     <Card containerStyle={styles.card}>
-                        <Card.Title>Search by Category</Card.Title>
-                        <Card.Divider />
-                        <CategoriesDropdown onSelectCategory={handleCategorySelect} />
-                        <Button
-                            title="Search"
-                            onPress={navigateToCategoryRecipes} // Call the function to navigate
-                            containerStyle={styles.buttonStyle}
-                        />
-                    </Card>
-
-                    <Card containerStyle={styles.card}>
                         <Card.Title>Search by Ingredient Image</Card.Title>
                         <Card.Divider />
                         <Button
@@ -96,6 +85,18 @@ export default function SearchScreen({ navigation }) {
                             containerStyle={styles.buttonStyle}
                         />
                     </Card>
+
+                    <Card containerStyle={styles.card}>
+                        <Card.Title>Search by Category</Card.Title>
+                        <Card.Divider />
+                        <CategoriesDropdown onSelectCategory={handleCategorySelect} />
+                        <Button
+                            title="Search"
+                            onPress={navigateToCategoryRecipes} // Call the function to navigate
+                            containerStyle={styles.buttonStyle}
+                        />
+                    </Card>
+
                 {/*</View>*/}
             </ScrollView>
             <NavigationBar navigation={navigation} />
@@ -106,7 +107,7 @@ export default function SearchScreen({ navigation }) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        paddingHorizontal: 20,
+        paddingBottom: 70,
     },
     scrollView: {
         flexGrow: 1,
